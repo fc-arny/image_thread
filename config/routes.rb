@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
-  resources :images
-  resources :threads
+  namespace :image_thread do
+    resources :images
+    resources :threads
+  end
 end

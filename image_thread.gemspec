@@ -24,6 +24,8 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'rails', '~>4.0.0'
   spec.add_dependency 'carrierwave'
+  spec.add_dependency 'rmagick'
+  spec.add_dependency 'mini_magick'
   spec.add_dependency 'foreigner'
   spec.add_dependency 'migration_comments'
 end

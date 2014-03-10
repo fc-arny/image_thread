@@ -1,8 +1,8 @@
 class CreateImageThreadTables < ActiveRecord::Migration
   def up
     create_table :image_thread_threads do |t|
-      t.references  :item, null: false, polymorphic: true,  comment: 'Reference to related model'
       t.references  :default_image, default: nil,           comment: 'Reference to default image of thread'
+      t.references  :owner,                                 comment: 'Who can update thread'
       t.datetime    :created_at
     end
 
@@ -10,9 +10,11 @@ class CreateImageThreadTables < ActiveRecord::Migration
     add_index :image_thread_threads, :default_image_id
 
     create_table :image_thread_images do |t|
-      t.references :image_thread
-      t.string :name
-      t.string :file, null: false
+      t.references :thread
+      t.string    :name,                                comment: 'Displayed file name'
+      t.string    :source, null: false,                 comment: 'Real file name'
+      t.string    :state, default: 'new', null: false,  comment: 'File state: active, new, deleted, archive'
+      t.datetime  :created_at
     end
 
     add_index :image_thread_images, :image_thread_id
@@ -22,10 +24,11 @@ class CreateImageThreadTables < ActiveRecord::Migration
   end
 
   def down
-    remove_foreign_key :image_thread_threads
-    remove_foreign_key :image_thread_images
-    remove_index :image_thread_threads, [:item_type, :item_id]
-    remove_index :image_thread_threads, :default_image_id
+    remove_foreign_key :image_thread_threads, column: :default_image_id
+    remove_foreign_key :image_thread_images, column: :image_thread_id
+
+    #remove_index :image_thread_threads, [:item_type, :item_id]
+    remove_index :image_thread_threads, :default_im2age_id
 
     remove_index :image_thread_images, :image_thread_id
 

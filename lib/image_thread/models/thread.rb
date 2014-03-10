@@ -1,8 +1,7 @@
 module ImageThread
   class Thread < ::ActiveRecord::Base
-    has_many :images, class_name: 'ImageThread::Image'
+    self.table_name = ImageThread.thread_table_name.to_s
 
-    belongs_to :item, polymorphic: true
-    belongs_to :default_image, class_name: 'ImageThread::Image'
+    has_many :images, class_name: 'ImageThread::Image'
   end
 end

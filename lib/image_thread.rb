@@ -1,15 +1,18 @@
-require 'active_support'
-require 'active_model'
+require 'rails/all'
 
 require 'carrierwave'
 require 'foreigner'
 require 'migration_comments'
+require 'image_thread/helpers/form_helper'
 
 module ImageThread
   extend ActiveSupport::Autoload
 
-  # Uploader
-  autoload :ImageUploader, 'image_thread/uploaders/image_uploader'
+  mattr_accessor :image_table_name
+  @@image_table_name = :image_thread_images
+
+  mattr_accessor :thread_table_name
+  @@thread_table_name = :image_thread_threads
 
   # Models
   autoload :Thread, 'image_thread/models/thread'

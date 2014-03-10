@@ -1,7 +1,11 @@
-module ImageThread
-  class Image < ::ActiveRecord::Base
-    belongs_to :image_thread, class_name: 'ImageThread::Thread'
+require  'image_thread/uploaders/image_uploader'
 
-    mount_uploader :file, ImageThread::ImageUploader
+module ImageThread
+  class Image < ActiveRecord::Base
+    self.table_name = ImageThread.image_table_name.to_s
+
+    belongs_to :thread, class_name: 'ImageThread::Thread'
+
+    mount_uploader :source, ImageThread::ImageUploader
   end
 end
