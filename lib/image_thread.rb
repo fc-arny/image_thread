@@ -23,5 +23,9 @@ module ImageThread
   end
 end
 
+ActiveSupport.on_load(:active_record) do
+  include ImageThread::ModelMethods
+end
+
 require 'image_thread/version'
 require 'image_thread/engine'
