@@ -13,8 +13,10 @@ module ImageThread
     end
 
     def store_dir
-      thread = model.thread_id || 'all'
-      ['uploads/image_thread', thread].join('/')
+      dir    = model.dir       || 'all'
+      thread = model.thread_id || 'tmp'
+
+      ['uploads', 'images', dir, thread].join('/')
     end
 
     protected

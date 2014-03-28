@@ -1,0 +1,4 @@
+%span.btn.btn-success.fileinput-button
+  /%i.glyphicon.glyphicon-plus
+  %span Add files...
+  = images.file_field :source, class: 'image_thread_fileupload', multiply: true, data: { url: image_thread_images_path, image_thred_uploader: uploader_id }

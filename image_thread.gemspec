@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ['arthur.shcheglov@gmail.com']
   spec.summary       = %q{Images for models}
   spec.description   = %q{Images for models}
-  spec.homepage      = 'http://martsoft.ru/image_thread'
+  spec.homepage      = 'http://martsoft.ru/soft/image_thread'
   spec.license       = 'MIT'
 
   spec.files         = Dir['README.md', 'lib/**/*']

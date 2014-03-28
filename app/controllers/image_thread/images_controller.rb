@@ -4,15 +4,16 @@ module ImageThread
 
     def create
       image = ImageThread::Image.new do |img|
-        img.thread_id = uploader_thread!
-        img.name      = params[:source].original_filename
+        img.name      = params[:name] ||params[:source].original_filename
+        img.thread_id = params[:thread] || nil #uploader_thread!
         img.source    = params[:source]
-        img.state     = :new
+        img.dir       = params[:dir]
+        img.state     = Image::STATE_NEW
       end
 
       image.save
 
-      render json: {image: {id: image.id, state: image.state}}
+      render json: {image: {id: image.id, state: Image::STATE_READY}}
     end
 
     def destroy
@@ -29,7 +30,7 @@ module ImageThread
     def uploader_thread!
       thread_id = params[:thread] || uploader_thread
 
-      unless thread_id
+      if thread_id.blank?
         thread_id = ImageThread::Thread.create.id
         session[params[:uploader]] = {thread: thread_id}
       end

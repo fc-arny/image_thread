@@ -14,6 +14,7 @@ class CreateImageThreadTables < ActiveRecord::Migration
       t.string    :name,                                comment: 'Displayed file name'
       t.string    :source, null: false,                 comment: 'Real file name'
       t.string    :state, default: 'new', null: false,  comment: 'File state: active, new, deleted, archive'
+      t.string    :dir, default: ''
       t.datetime  :created_at
     end
 
