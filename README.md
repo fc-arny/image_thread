@@ -1,8 +1,24 @@
 # ImageThread
 
-TODO: Write a gem description
+Gem for multiply file upload (for backend).
+
+One thread (thread of images) have many images. Attach thread to your model and
+you get "album"
+
+Dependencies:
+1. carrierwave
+2. foreigner
+
+
 
 ## Installation
+
+Copy migration:
+
+    rails generate image_thread:install
+
+Then run this migration.
+
 
 Add this line to your application's Gemfile:
 
@@ -18,9 +34,12 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### Add thread to model
+1. Create filed %{your_thread_name}_id in your model (Link to thread)
+2. Inside model class add line: has_image_thread :%{your_thread_name}
 
-1.
+### Upload files
+1. In form use this: image_thread_field helper(like text_field etc): form.image_thread_field(:%{your_thread_name}, options)
 
 ## Contributing
 
