@@ -20,7 +20,7 @@ module ImageThread
             _assign_attribute(field_id, thread_id)
 
             transaction do
-              instance_variable_get(:"@#{field}_images").each do |_, image|
+              instance_variable_get(:"@#{field}_images").each do |image|
                 ImageThread::Image.where(id: image[:id]).update_all(state: image[:state], thread_id: thread_id) unless image[:state].blank?
               end
             end
@@ -29,7 +29,12 @@ module ImageThread
           end
 
           define_method [field, 'images='].join('_') do |images|
-            instance_variable_set(:"@#{field}_images", images)
+            res = []
+            images.split(',').each do |image|
+              id, state = image.split(':')
+              res << {id: id, state: state}
+            end
+            instance_variable_set(:"@#{field}_images", res)
           end
 
           define_method [field, 'images'].join('_') do

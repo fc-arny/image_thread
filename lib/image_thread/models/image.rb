@@ -4,11 +4,12 @@ module ImageThread
   class Image < ActiveRecord::Base
     self.table_name = ImageThread.image_table_name.to_s
 
-    STATE_NEW     = :new
-    STATE_READY   = :ready
-    STATE_DELETED = :deleted
+    STATE_NEW      = :new
+    STATE_ACTIVE   = :active
+    STATE_INACTIVE = :inactive
+    STATE_DELETED  = :deleted
 
-    STATES = [STATE_NEW, STATE_READY, STATE_DELETED]
+    STATES = [STATE_NEW, STATE_ACTIVE, STATE_DELETED, STATE_INACTIVE]
 
     belongs_to :thread, class_name: 'ImageThread::Thread'
 

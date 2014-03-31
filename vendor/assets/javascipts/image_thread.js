@@ -1,40 +1,50 @@
-//= require load-image.min
 //= require jquery/ui/jquery.ui.widget
+//= require load-image
+//= require tmpl
 //= require jquery/jquery.fileupload
 //= require jquery/jquery.fileupload-process
 //= require jquery/jquery.fileupload-image
-//= require jquery/jquery.fileupload-validate
 //= require jquery/jquery.fileupload-ui
 
 $(function(){
     $('.image_thread_fileupload').each(function(){
         $(this).fileupload({
-            dropZone: $(this),
             dataType: 'json',
+            autoUpload: true,
             formData: {
                 uploader: $(this).data('uploader'),
                 thread:   $(this).data('thread'),
                 dir:      $(this).data('dir')
             },
-            add: function (e, data) {
-                $(this).closest('.btn').addClass('load');
-                data.context = $('<p/>').text('Uploading...').appendTo(document.body);
-                data.submit();
-                console.log(data);
-            },
+
+            filesContainer: $(document).find('.table'),
+
             done: function (e, data) {
-                $(this).closest('.btn').removeClass('load');
-                var number = data.result.image.id;
-                var name    = 'city[cover_thread_images]' + number + ']';
-                var $id      = $('<input>', {type: 'hidden', name: name + '[id]', value: data.result.image.id}),
-                    $state   = $('<input>', {type: 'hidden', name: name + '[state]', value: data.result.image.state}),
-                    $thread  = $('<input>', {type: 'hidden', name: name + '[thread_id]', value: data.result.image.thread_id});
+                var images       = [],
+                    $threadField = $(this).next(),
+                    params_str   = $threadField.val();
 
-                $id.insertAfter($(this));
-                $state.insertAfter($(this));
-                $thread.insertAfter($(this));
+                // Unpack params
+                if(params_str.length > 0) {
+                    var params = params_str.split(',');
+                    for(var i in params) {
+                        var vals = params[i].trim().split(':');
+                        images['id' + vals[0]] = vals[1]
+                    }
+                }
 
-                data.context.text('Upload finished.');
+                for(var i in data.result.files) {
+                    images['id' + data.result.files[i].id] = data.result.files[i].state;
+                }
+
+                // Pack params
+                var new_params = [];
+                for(var i in images) {
+                    new_params.push(i.replace('id', '') + ':' + images[i]);
+                }
+
+                $threadField.val(new_params.join(','));
+                $(this)
             }
         });
     });

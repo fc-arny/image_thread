@@ -4,6 +4,7 @@ require 'carrierwave'
 require 'foreigner'
 require 'migration_comments'
 require 'image_thread/helpers/form_helper'
+require 'image_thread/model_methods'
 
 module ImageThread
   extend ActiveSupport::Autoload

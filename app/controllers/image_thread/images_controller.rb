@@ -1,23 +1,17 @@
 module ImageThread
   class ImagesController < ::ApplicationController
-    #before_filter :check_access
-
     def create
       image = ImageThread::Image.new do |img|
-        img.name      = params[:name] ||params[:source].original_filename
+        img.name      = params[:name] || params[:source].original_filename
         img.thread_id = params[:thread] || nil #uploader_thread!
         img.source    = params[:source]
-        img.dir       = params[:dir]
+        img.dir       = params[:dir] # Add check file exists?
         img.state     = Image::STATE_NEW
       end
 
       image.save
 
-      render json: {image: {id: image.id, state: Image::STATE_READY}}
-    end
-
-    def destroy
-
+      render json: {files: [{id: image.id, state: Image::STATE_ACTIVE, url: image.source.url, thumbnailUrl: image.source.url, name: image.name}]}
     end
 
     private
