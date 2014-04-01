@@ -9,6 +9,15 @@ Dependencies:
 1. carrierwave
 2. foreigner
 
+## TODOs:
+1. Single/Multi uploaders
+2. Validators - size, count, format and etc
+3. Handle errors
+4. Customize uploaders
+5. I18n
+6. Reorder images in thread
+7. Dynamic thumbs (i.e. thread.image[0].fit_300x100 or thread.image[0].fill_300x100)
+8. Placeholder generator for nonexistent files
 
 
 ## Installation

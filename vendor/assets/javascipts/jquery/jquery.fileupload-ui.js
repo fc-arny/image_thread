@@ -1,64 +1,60 @@
-/*
- * jQuery File Upload User Interface Plugin 9.5.2
- * https://github.com/blueimp/jQuery-File-Upload
- *
- * Copyright 2010, Sebastian Tschan
- * https://blueimp.net
- *
- * Licensed under the MIT license:
- * http://www.opensource.org/licenses/MIT
- */
-
-/* jshint nomen:false */
-/* global define, window */
-
 (function (factory) {
     'use strict';
     if (typeof define === 'function' && define.amd) {
         // Register as an anonymous AMD module:
         define([
             'jquery',
-            'tmpl',
             './jquery.fileupload-image.js'
         ], factory);
     } else {
         // Browser globals:
         factory(
-            window.jQuery,
-            window.tmpl
+            window.jQuery
         );
     }
 }(function ($, tmpl) {
     'use strict';
 
     $.blueimp.fileupload.prototype._specialOptions.push(
-        'filesContainer',
-        'uploadTemplateId',
-        'downloadTemplateId'
+        'filesContainer'
     );
 
-    // The UI version extends the file upload widget
-    // and adds complete user interface interaction:
     $.widget('blueimp.fileupload', $.blueimp.fileupload, {
 
         options: {
-            // By default, files added to the widget are uploaded as soon
-            // as the user clicks on the start buttons. To enable automatic
-            // uploads, set the following option to true:
-            autoUpload: false,
-            // The ID of the upload template:
-            uploadTemplateId: 'template-upload',
-            // The ID of the download template:
-            downloadTemplateId: 'template-download',
             // The container for the list of files. If undefined, it is set to
             // an element with class "files" inside of the widget element:
             filesContainer: undefined,
             // By default, files are appended to the files container.
             // Set the following option to true, to prepend files instead:
-            prependFiles: false,
+            prependFiles: true,
             // The expected data type of the upload response, sets the dataType
             // option of the $.ajax upload requests:
             dataType: 'json',
+            imageTemplate: function(o) {
+                var rows = $();
+                $.each(o.files, function (index, file) {
+                    var row = $('<div class="image-thread-item" style="width: 150px; float: left">' +
+                                    '<div class="preview"></div>' +
+                                    '<div class="error"></div>' +
+                                    '<div class="actions">' +
+                                        '<div class="progress"></div>' +
+                                        '<span class="loader"></span>' +
+                                        (!index ? '<button class="cancel">Cancel</button>' : '') +
+                                        '<button class="delete hidden">Delete</button>' +
+                                    '</div>' +
+                                '</div>');
+                    // Add to info bubble
+                    row.find('.name').text(file.name);
+                    row.find('.size').text(o.formatFileSize(file.size));
+
+                    if (file.error) {
+                        row.find('.error').text(file.error);
+                    }
+                    rows = rows.add(row);
+                });
+                return rows;
+            },
 
             // Function returning the current number of files,
             // used by the maxNumberOfFiles validation:
@@ -104,7 +100,6 @@
                     }).removeClass('processing');
                     that._renderPreviews(data);
                 }).done(function () {
-                    data.context.find('.start').prop('disabled', false);
                     if ((that._trigger('added', e, data) !== false) &&
                             (options.autoUpload || data.autoUpload) &&
                             data.autoUpload !== false) {
@@ -147,9 +142,38 @@
             },
             // Callback for successful uploads:
             done: function (e, data) {
+                console.log('===')
+                console.log($(this))
                 if (e.isDefaultPrevented()) {
                     return false;
                 }
+
+                var images       = [],
+                    $threadField = $(this).next(),
+                    params_str   = $threadField.val();
+
+                // Unpack params
+                if(params_str.length > 0) {
+                    var params = params_str.split(',');
+                    for(var i in params) {
+                        var vals = params[i].trim().split(':');
+                        images['id' + vals[0]] = vals[1]
+                    }
+                }
+
+                for(var i in data.result.files) {
+                    images['id' + data.result.files[i].id] = data.result.files[i].state;
+                }
+
+                // Pack params
+                var new_params = [];
+                for(var i in images) {
+                    new_params.push(i.replace('id', '') + ':' + images[i]);
+                }
+
+                $threadField.val(new_params.join(','));
+
+                // Default process
                 var that = $(this).data('blueimp-fileupload') ||
                         $(this).data('fileupload'),
                     getFilesFromResponse = data.getFilesFromResponse ||
@@ -162,37 +186,7 @@
                         var file = files[index] ||
                                 {error: 'Empty file upload result'};
                         deferred = that._addFinishedDeferreds();
-                        that._transition($(this)).done(
-                            function () {
-                                var node = $(this);
-                                template = that._renderDownload([file])
-                                    .replaceAll(node);
-                                that._forceReflow(template);
-                                that._transition(template).done(
-                                    function () {
-                                        data.context = $(this);
-                                        that._trigger('completed', e, data);
-                                        that._trigger('finished', e, data);
-                                        deferred.resolve();
-                                    }
-                                );
-                            }
-                        );
                     });
-                } else {
-                    template = that._renderDownload(files)[
-                        that.options.prependFiles ? 'prependTo' : 'appendTo'
-                    ](that.options.filesContainer);
-                    that._forceReflow(template);
-                    deferred = that._addFinishedDeferreds();
-                    that._transition(template).done(
-                        function () {
-                            data.context = $(this);
-                            that._trigger('completed', e, data);
-                            that._trigger('finished', e, data);
-                            deferred.resolve();
-                        }
-                    );
                 }
             },
             // Callback for failed (abort or error) uploads:
@@ -211,22 +205,6 @@
                             file.error = file.error || data.errorThrown ||
                                 true;
                             deferred = that._addFinishedDeferreds();
-                            that._transition($(this)).done(
-                                function () {
-                                    var node = $(this);
-                                    template = that._renderDownload([file])
-                                        .replaceAll(node);
-                                    that._forceReflow(template);
-                                    that._transition(template).done(
-                                        function () {
-                                            data.context = $(this);
-                                            that._trigger('failed', e, data);
-                                            that._trigger('finished', e, data);
-                                            deferred.resolve();
-                                        }
-                                    );
-                                }
-                            );
                         } else {
                             deferred = that._addFinishedDeferreds();
                             that._transition($(this)).done(
@@ -276,30 +254,6 @@
                             );
                     });
                 }
-            },
-            // Callback for global upload progress events:
-            progressall: function (e, data) {
-                if (e.isDefaultPrevented()) {
-                    return false;
-                }
-                var $this = $(this),
-                    progress = Math.floor(data.loaded / data.total * 100),
-                    globalProgressNode = $this.find('.fileupload-progress'),
-                    extendedProgressNode = globalProgressNode
-                        .find('.progress-extended');
-                if (extendedProgressNode.length) {
-                    extendedProgressNode.html(
-                        ($this.data('blueimp-fileupload') || $this.data('fileupload'))
-                            ._renderExtendedProgress(data)
-                    );
-                }
-                globalProgressNode
-                    .find('.progress')
-                    .attr('aria-valuenow', progress)
-                    .children().first().css(
-                        'width',
-                        progress + '%'
-                    );
             },
             // Callback for uploads start, equivalent to the global ajaxStart event:
             start: function (e) {
@@ -486,22 +440,15 @@
 
         _renderUpload: function (files) {
             return this._renderTemplate(
-                this.options.uploadTemplate,
+                this.options.imageTemplate,
                 files
             );
-        },
-
-        _renderDownload: function (files) {
-            return this._renderTemplate(
-                this.options.downloadTemplate,
-                files
-            ).find('a[download]').each(this._enableDragToDesktop).end();
         },
 
         _startHandler: function (e) {
             e.preventDefault();
             var button = $(e.currentTarget),
-                template = button.closest('.template-upload'),
+                template = button.closest('.image-thread-item'),
                 data = template.data('data');
             button.prop('disabled', true);
             if (data && data.submit) {
@@ -512,7 +459,7 @@
         _cancelHandler: function (e) {
             e.preventDefault();
             var template = $(e.currentTarget)
-                    .closest('.template-upload,.template-download'),
+                    .closest('.image-thread-item'),
                 data = template.data('data') || {};
             data.context = data.context || template;
             if (data.abort) {
@@ -527,7 +474,7 @@
             e.preventDefault();
             var button = $(e.currentTarget);
             this._trigger('destroy', e, $.extend({
-                context: button.closest('.template-download'),
+                context: button.closest('.image-thread-item'),
                 type: 'DELETE'
             }, button.data()));
         },
@@ -633,21 +580,6 @@
                 .parent().addClass('disabled');
         },
 
-        _initTemplates: function () {
-            var options = this.options;
-            options.templatesContainer = this.document[0].createElement(
-                options.filesContainer.prop('nodeName')
-            );
-            if (tmpl) {
-                if (options.uploadTemplateId) {
-                    options.uploadTemplate = tmpl(options.uploadTemplateId);
-                }
-                if (options.downloadTemplateId) {
-                    options.downloadTemplate = tmpl(options.downloadTemplateId);
-                }
-            }
-        },
-
         _initFilesContainer: function () {
             var options = this.options;
             if (options.filesContainer === undefined) {
@@ -660,7 +592,6 @@
         _initSpecialOptions: function () {
             this._super();
             this._initFilesContainer();
-            this._initTemplates();
         },
 
         _create: function () {
