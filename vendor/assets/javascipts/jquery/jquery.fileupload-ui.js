@@ -34,14 +34,13 @@
             imageTemplate: function(o) {
                 var rows = $();
                 $.each(o.files, function (index, file) {
-                    var row = $('<div class="image-thread-item" style="width: 150px; float: left">' +
-                                    '<div class="preview"></div>' +
+                    var row = $('<div class="image-thread-item">' +
+                                    '<div class="preview">' +
+                                        '<button class="btn btn-danger delete" title="Delete"><span>&times;</span></button>' +
+                                    '</div>' +
                                     '<div class="error"></div>' +
                                     '<div class="actions">' +
                                         '<div class="progress"></div>' +
-                                        '<span class="loader"></span>' +
-                                        (!index ? '<button class="cancel">Cancel</button>' : '') +
-                                        '<button class="delete hidden">Delete</button>' +
                                     '</div>' +
                                 '</div>');
                     // Add to info bubble
