@@ -1,4 +1,4 @@
-@charset "UTF-8";
+//@charset "UTF-8";
 .fileinput-button {
   position: relative;
   overflow: hidden;
@@ -23,7 +23,7 @@
 
 .progress-animated .progress-bar,
 .progress-animated .bar {
-  background: assets_url('/image_thread/progressbar.bar') !important;
+  background: image_url('image_thread/progressbar.gif') !important;
   filter: none;
 }
 
@@ -35,10 +35,11 @@
 .fileupload-processing .fileupload-process,
 .files .processing .preview {
   display: block;
-  width: 32px;
-  height: 32px;
-  background: assets_url('/image_thread/loading.gif') center no-repeat;
+  background: image_url('image_thread/loading.gif') center center no-repeat;
   background-size: contain;
+  img {
+    opacity: 0;
+  }
 }
 
 .image-thread-item {
@@ -55,13 +56,14 @@
     canvas, img {
       display: block;
       margin: 0 auto;
+      opacity: 1;
     }
     .btn {
       right: 0;
       position: absolute;
-      line-height: 16px;
+      line-height: 10px;
       font-size: 20px;
-      padding: 0px 2px 2px;
+      padding: 0px 1px 4px;
       margin: 5px;
       opacity: 0.3;
       background: #515151;
@@ -74,6 +76,7 @@
     }
   }
   .actions {
+    height: 25px;
     .progress {
       margin: 5px;
     }

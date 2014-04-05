@@ -34,13 +34,15 @@
             imageTemplate: function(o) {
                 var rows = $();
                 $.each(o.files, function (index, file) {
-                    var row = $('<div class="image-thread-item">' +
+                    var row = $('<div class="image-thread-item fade">' +
                                     '<div class="preview">' +
                                         '<button class="btn btn-danger delete" title="Delete"><span>&times;</span></button>' +
                                     '</div>' +
                                     '<div class="error"></div>' +
                                     '<div class="actions">' +
-                                        '<div class="progress"></div>' +
+                                        '<div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">' +
+                                            '<div class="progress-bar progress-bar-success" style="width:0%;"></div>' +
+                                         '</div>' +
                                     '</div>' +
                                 '</div>');
                     // Add to info bubble
@@ -141,8 +143,6 @@
             },
             // Callback for successful uploads:
             done: function (e, data) {
-                console.log('===')
-                console.log($(this))
                 if (e.isDefaultPrevented()) {
                     return false;
                 }
@@ -178,12 +178,12 @@
                     getFilesFromResponse = data.getFilesFromResponse ||
                         that.options.getFilesFromResponse,
                     files = getFilesFromResponse(data),
-                    template,
                     deferred;
                 if (data.context) {
                     data.context.each(function (index) {
                         var file = files[index] ||
                                 {error: 'Empty file upload result'};
+                        data.context.find('.progress').remove();
                         deferred = that._addFinishedDeferreds();
                     });
                 }
@@ -425,10 +425,8 @@
                 formatFileSize: this._formatFileSize,
                 options: this.options
             });
-            if (result instanceof $) {
-                return result;
-            }
-            return $(this.options.templatesContainer).html(result).children();
+
+            return result;
         },
 
         _renderPreviews: function (data) {
