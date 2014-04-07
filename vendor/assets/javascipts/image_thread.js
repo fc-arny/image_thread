@@ -13,7 +13,7 @@ $(function(){
                 thread:   $(this).data('thread'),
                 dir:      $(this).data('dir')
             },
-
+            inputName: $(this).data('name'),
             previewCrop: true,
             previewMaxWidth: 120,
             previewMaxHeight: 120,

@@ -16,7 +16,8 @@
     'use strict';
 
     $.blueimp.fileupload.prototype._specialOptions.push(
-        'filesContainer'
+        'filesContainer',
+        'inputName'
     );
 
     $.widget('blueimp.fileupload', $.blueimp.fileupload, {
@@ -31,23 +32,17 @@
             // The expected data type of the upload response, sets the dataType
             // option of the $.ajax upload requests:
             dataType: 'json',
-            imageTemplate: function(o) {
+            uploadTemplate: function(o) {
                 var rows = $();
                 $.each(o.files, function (index, file) {
-                    var row = $('<div class="image-thread-item fade">' +
-                                    '<div class="preview">' +
-                                        '<button class="btn btn-danger delete" title="Delete"><span>&times;</span></button>' +
-                                    '</div>' +
-                                    '<div class="error"></div>' +
-                                    '<div class="actions">' +
-                                        '<div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">' +
-                                            '<div class="progress-bar progress-bar-success" style="width:0%;"></div>' +
-                                         '</div>' +
-                                    '</div>' +
-                                '</div>');
-                    // Add to info bubble
-                    row.find('.name').text(file.name);
-                    row.find('.size').text(o.formatFileSize(file.size));
+                    var info = 'Name: ' + file.name + ' | Size: ' + o.formatFileSize(file.size);
+                    var row = $(
+                        '<div class="image-thread-item new" title="' + info + '">' +
+                            '<div class="preview">' +
+                                '<button class="btn btn-danger delete" title="Delete"><span>&times;</span></button>' +
+                            '</div>' +
+                            '<div class="error"></div>' +
+                        '</div>');
 
                     if (file.error) {
                         row.find('.error').text(file.error);
@@ -72,34 +67,26 @@
                 return [];
             },
 
-            // The add callback is invoked as soon as files are added to the fileupload
-            // widget (via file input selection, drag & drop or add API call).
-            // See the basic file upload widget for more information:
             add: function (e, data) {
                 if (e.isDefaultPrevented()) {
                     return false;
                 }
+
                 var $this = $(this),
-                    that = $this.data('blueimp-fileupload') ||
-                        $this.data('fileupload'),
+                    that = $this.data('blueimp-fileupload') || $this.data('fileupload'),
                     options = that.options;
+
                 data.context = that._renderUpload(data.files)
                     .data('data', data)
                     .addClass('processing');
-                options.filesContainer[
-                    options.prependFiles ? 'prepend' : 'append'
-                ](data.context);
-                that._forceReflow(data.context);
-                that._transition(data.context);
+
+                options.filesContainer[options.prependFiles ? 'prepend' : 'append'](data.context);
+
+//                that._forceReflow(data.context);
+//                that._transition(data.context);
+
                 data.process(function () {
                     return $this.fileupload('process', data);
-                }).always(function () {
-                    data.context.each(function (index) {
-                        $(this).find('.size').text(
-                            that._formatFileSize(data.files[index].size)
-                        );
-                    }).removeClass('processing');
-                    that._renderPreviews(data);
                 }).done(function () {
                     if ((that._trigger('added', e, data) !== false) &&
                             (options.autoUpload || data.autoUpload) &&
@@ -113,7 +100,7 @@
                             if (error) {
                                 $(this).find('.error').text(error);
                             }
-                        });
+                        }).removeClass('processing');
                     }
                 });
             },
@@ -173,20 +160,19 @@
                 $threadField.val(new_params.join(','));
 
                 // Default process
-                var that = $(this).data('blueimp-fileupload') ||
-                        $(this).data('fileupload'),
-                    getFilesFromResponse = data.getFilesFromResponse ||
-                        that.options.getFilesFromResponse,
+                var that = $(this).data('blueimp-fileupload') || $(this).data('fileupload'),
+                    getFilesFromResponse = data.getFilesFromResponse || that.options.getFilesFromResponse,
                     files = getFilesFromResponse(data),
                     deferred;
-                if (data.context) {
-                    data.context.each(function (index) {
-                        var file = files[index] ||
-                                {error: 'Empty file upload result'};
-                        data.context.find('.progress').remove();
-                        deferred = that._addFinishedDeferreds();
-                    });
-                }
+
+                data.context.each(function (index) {
+                    var file = files[index] ||
+                            {error: 'Empty file upload result'};
+                    deferred = that._addFinishedDeferreds();
+                    $(this).removeClass('processing');
+                    that._renderPreviews(data);
+                });
+
             },
             // Callback for failed (abort or error) uploads:
             fail: function (e, data) {
@@ -437,7 +423,14 @@
 
         _renderUpload: function (files) {
             return this._renderTemplate(
-                this.options.imageTemplate,
+                this.options.uploadTemplate,
+                files
+            );
+        },
+
+        _renderDownload: function (files) {
+            return this._renderTemplate(
+                this.options.downloadTemplate,
                 files
             );
         },

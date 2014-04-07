@@ -2,12 +2,13 @@ module ActionView
   module Helpers
     module FormHelper
       def image_thread_field(object_name, method, options = nil)
+        tag = ActionView::Helpers::Tags::Base.new(object_name, [method, 'images'].join('_'), self)
+
         options.update(class: 'image_thread_fileupload')
-        options.update(data: { url:      image_thread_images_path,
-                               uploader: ['image_thread_uploader', SecureRandom.hex(16)].join('_'),
+        options.update(data: { url:      '/image_thread/images',
                                thread:   options.delete(:thread),
                                dir:      options[:dir],
-                               name:     [object_name, '[images_attributes]'].join})
+                               name:     tag.send(:tag_name, true)})
 
         template = <<-HTML
           <div class="uploader-container">
