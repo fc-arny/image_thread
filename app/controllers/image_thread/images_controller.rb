@@ -3,7 +3,7 @@ module ImageThread
     def create
       image = ImageThread::Image.new do |img|
         img.name      = params[:name] || params[:source].original_filename
-        img.thread_id = params[:thread] || nil #uploader_thread!
+        img.thread_id = uploader_thread!
         img.source    = params[:source]
         img.dir       = params[:dir] # Add check file exists?
         img.state     = Image::STATE_NEW
@@ -22,14 +22,16 @@ module ImageThread
     end
 
     def uploader_thread!
-      thread_id = params[:thread] || uploader_thread
+      Rails.cache.fetch(['uploader_thread', params[:uploader]], expires_in: 5.minutes) do
+        thread_id = params[:thread].to_i.zero? ? uploader_thread : params[:thread]
 
-      if thread_id.blank?
-        thread_id = ImageThread::Thread.create.id
-        session[params[:uploader]] = {thread: thread_id}
+        if thread_id.blank?
+          thread_id = ImageThread::Thread.create.id
+          session[params[:uploader]] = {thread: thread_id}
+        end
+
+        thread_id
       end
-
-      thread_id
     end
   end
 end

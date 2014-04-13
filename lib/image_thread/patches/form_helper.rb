@@ -6,7 +6,8 @@ module ActionView
 
         options.update(class: 'image_thread_fileupload')
         options.update(data: { url:      '/image_thread/images',
-                               thread:   options.delete(:thread),
+                               uploader: [object_name, method, 'uploader', SecureRandom.hex(16)].join('_'),
+                               thread:   options.delete(:thread).to_i,
                                dir:      options[:dir],
                                name:     tag.send(:tag_name, true)})
 
@@ -15,7 +16,6 @@ module ActionView
             <span class="btn btn-success fileinput-button">
               <span> Add files...</span>
               #{file_field_tag(:source, options)}
-              #{hidden_field(object_name, [method, 'images'].join('_'))}
             </span>
             <div class="files uploader-#{method} clearfix"></div>
           </div>

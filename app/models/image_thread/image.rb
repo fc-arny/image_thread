@@ -13,6 +13,6 @@ module ImageThread
 
     belongs_to :thread, class_name: 'ImageThread::Thread'
 
-    mount_uploader :source, ImageThread::ImageUploader
+    mount_uploader :source, ImageThread::Uploaders::ImageUploader
   end
 end

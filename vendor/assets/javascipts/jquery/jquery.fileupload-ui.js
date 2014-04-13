@@ -42,6 +42,7 @@
                                 '<button class="btn btn-danger delete" title="Delete"><span>&times;</span></button>' +
                             '</div>' +
                             '<div class="error"></div>' +
+                            '<input type="hidden" name="' + o.options.inputName + '" value="" />' +
                         '</div>');
 
                     if (file.error) {
@@ -81,9 +82,6 @@
                     .addClass('processing');
 
                 options.filesContainer[options.prependFiles ? 'prepend' : 'append'](data.context);
-
-//                that._forceReflow(data.context);
-//                that._transition(data.context);
 
                 data.process(function () {
                     return $this.fileupload('process', data);
@@ -130,34 +128,11 @@
             },
             // Callback for successful uploads:
             done: function (e, data) {
+                var $imageInput = data.context.children().last();
+
                 if (e.isDefaultPrevented()) {
                     return false;
                 }
-
-                var images       = [],
-                    $threadField = $(this).next(),
-                    params_str   = $threadField.val();
-
-                // Unpack params
-                if(params_str.length > 0) {
-                    var params = params_str.split(',');
-                    for(var i in params) {
-                        var vals = params[i].trim().split(':');
-                        images['id' + vals[0]] = vals[1]
-                    }
-                }
-
-                for(var i in data.result.files) {
-                    images['id' + data.result.files[i].id] = data.result.files[i].state;
-                }
-
-                // Pack params
-                var new_params = [];
-                for(var i in images) {
-                    new_params.push(i.replace('id', '') + ':' + images[i]);
-                }
-
-                $threadField.val(new_params.join(','));
 
                 // Default process
                 var that = $(this).data('blueimp-fileupload') || $(this).data('fileupload'),
@@ -168,6 +143,9 @@
                 data.context.each(function (index) {
                     var file = files[index] ||
                             {error: 'Empty file upload result'};
+
+                    $imageInput.val(file.id + ':' + file.state);
+
                     deferred = that._addFinishedDeferreds();
                     $(this).removeClass('processing');
                     that._renderPreviews(data);

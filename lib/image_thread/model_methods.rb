@@ -16,21 +16,31 @@ module ImageThread
           before_save before_save_method.to_sym
 
           define_method before_save_method do
-            thread_id = @attributes[field_id].blank? ? ImageThread::Thread.create.id : @attributes[field_id]
-            _assign_attribute(field_id, thread_id)
+            thread_id   = nil
+            image_ids   = instance_variable_get(:"@#{field}_images").map { |i| i[:id] }
+
+            ImageThread::Image.select('id, thread_id').where(id: image_ids).each do |image|
+              if !thread_id.blank? && thread_id != image.thread_id
+                raise DifferentThreads, "Try to save images from different thread as one. Image ids: #{image_ids}"
+              end
+
+              thread_id = image.thread_id
+            end
 
             transaction do
               instance_variable_get(:"@#{field}_images").each do |image|
-                ImageThread::Image.where(id: image[:id]).update_all(state: image[:state], thread_id: thread_id) unless image[:state].blank?
+                ImageThread::Image.where(id: image[:id]).update_all(state: image[:state],) unless image[:state].blank?
               end
             end
+
+            _assign_attribute(field_id, thread_id)
 
             instance_variable_set(:"@#{field}_images", [])
           end
 
           define_method [field, 'images='].join('_') do |images|
             res = []
-            images.split(',').each do |image|
+            images.each do |image|
               id, state = image.split(':')
               res << {id: id, state: state}
             end
