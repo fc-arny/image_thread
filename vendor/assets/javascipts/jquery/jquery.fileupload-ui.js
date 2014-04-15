@@ -308,23 +308,6 @@
             return this._finishedUploads;
         },
 
-        // Link handler, that allows to download files
-        // by drag & drop of the links to the desktop:
-        _enableDragToDesktop: function () {
-            var link = $(this),
-                url = link.prop('href'),
-                name = link.prop('download'),
-                type = 'application/octet-stream';
-            link.bind('dragstart', function (e) {
-                try {
-                    e.originalEvent.dataTransfer.setData(
-                        'DownloadURL',
-                        [type, name, url].join(':')
-                    );
-                } catch (ignore) {}
-            });
-        },
-
         _formatFileSize: function (bytes) {
             if (typeof bytes !== 'number') {
                 return '';
@@ -336,48 +319,6 @@
                 return (bytes / 1000000).toFixed(2) + ' MB';
             }
             return (bytes / 1000).toFixed(2) + ' KB';
-        },
-
-        _formatBitrate: function (bits) {
-            if (typeof bits !== 'number') {
-                return '';
-            }
-            if (bits >= 1000000000) {
-                return (bits / 1000000000).toFixed(2) + ' Gbit/s';
-            }
-            if (bits >= 1000000) {
-                return (bits / 1000000).toFixed(2) + ' Mbit/s';
-            }
-            if (bits >= 1000) {
-                return (bits / 1000).toFixed(2) + ' kbit/s';
-            }
-            return bits.toFixed(2) + ' bit/s';
-        },
-
-        _formatTime: function (seconds) {
-            var date = new Date(seconds * 1000),
-                days = Math.floor(seconds / 86400);
-            days = days ? days + 'd ' : '';
-            return days +
-                ('0' + date.getUTCHours()).slice(-2) + ':' +
-                ('0' + date.getUTCMinutes()).slice(-2) + ':' +
-                ('0' + date.getUTCSeconds()).slice(-2);
-        },
-
-        _formatPercentage: function (floatValue) {
-            return (floatValue * 100).toFixed(2) + ' %';
-        },
-
-        _renderExtendedProgress: function (data) {
-            return this._formatBitrate(data.bitrate) + ' | ' +
-                this._formatTime(
-                    (data.total - data.loaded) * 8 / data.bitrate
-                ) + ' | ' +
-                this._formatPercentage(
-                    data.loaded / data.total
-                ) + ' | ' +
-                this._formatFileSize(data.loaded) + ' / ' +
-                this._formatFileSize(data.total);
         },
 
         _renderTemplate: function (func, files) {
@@ -404,38 +345,6 @@
                 this.options.uploadTemplate,
                 files
             );
-        },
-
-        _renderDownload: function (files) {
-            return this._renderTemplate(
-                this.options.downloadTemplate,
-                files
-            );
-        },
-
-        _startHandler: function (e) {
-            e.preventDefault();
-            var button = $(e.currentTarget),
-                template = button.closest('.image-thread-item'),
-                data = template.data('data');
-            button.prop('disabled', true);
-            if (data && data.submit) {
-                data.submit();
-            }
-        },
-
-        _cancelHandler: function (e) {
-            e.preventDefault();
-            var template = $(e.currentTarget)
-                    .closest('.image-thread-item'),
-                data = template.data('data') || {};
-            data.context = data.context || template;
-            if (data.abort) {
-                data.abort();
-            } else {
-                data.errorThrown = 'abort';
-                this._trigger('fail', e, data);
-            }
         },
 
         _deleteHandler: function (e) {
@@ -473,79 +382,25 @@
             return dfd;
         },
 
-        _initButtonBarEventHandlers: function () {
-            var fileUploadButtonBar = this.element.find('.fileupload-buttonbar'),
-                filesList = this.options.filesContainer;
-            this._on(fileUploadButtonBar.find('.start'), {
-                click: function (e) {
-                    e.preventDefault();
-                    filesList.find('.start').click();
-                }
-            });
-            this._on(fileUploadButtonBar.find('.cancel'), {
-                click: function (e) {
-                    e.preventDefault();
-                    filesList.find('.cancel').click();
-                }
-            });
-            this._on(fileUploadButtonBar.find('.delete'), {
-                click: function (e) {
-                    e.preventDefault();
-                    filesList.find('.toggle:checked')
-                        .closest('.template-download')
-                        .find('.delete').click();
-                    fileUploadButtonBar.find('.toggle')
-                        .prop('checked', false);
-                }
-            });
-            this._on(fileUploadButtonBar.find('.toggle'), {
-                change: function (e) {
-                    filesList.find('.toggle').prop(
-                        'checked',
-                        $(e.currentTarget).is(':checked')
-                    );
-                }
-            });
-        },
-
         _destroyButtonBarEventHandlers: function () {
             this._off(
                 this.element.find('.fileupload-buttonbar')
-                    .find('.start, .cancel, .delete'),
+                    .find('.delete'),
                 'click'
-            );
-            this._off(
-                this.element.find('.fileupload-buttonbar .toggle'),
-                'change.'
             );
         },
 
         _initEventHandlers: function () {
             this._super();
             this._on(this.options.filesContainer, {
-                'click .start': this._startHandler,
-                'click .cancel': this._cancelHandler,
                 'click .delete': this._deleteHandler
             });
-            this._initButtonBarEventHandlers();
         },
 
         _destroyEventHandlers: function () {
             this._destroyButtonBarEventHandlers();
             this._off(this.options.filesContainer, 'click');
             this._super();
-        },
-
-        _enableFileInputButton: function () {
-            this.element.find('.fileinput-button input')
-                .prop('disabled', false)
-                .parent().removeClass('disabled');
-        },
-
-        _disableFileInputButton: function () {
-            this.element.find('.fileinput-button input')
-                .prop('disabled', true)
-                .parent().addClass('disabled');
         },
 
         _initFilesContainer: function () {
@@ -565,31 +420,7 @@
         _create: function () {
             this._super();
             this._resetFinishedDeferreds();
-            if (!$.support.fileInput) {
-                this._disableFileInputButton();
-            }
-        },
-
-        enable: function () {
-            var wasDisabled = false;
-            if (this.options.disabled) {
-                wasDisabled = true;
-            }
-            this._super();
-            if (wasDisabled) {
-                this.element.find('input, button').prop('disabled', false);
-                this._enableFileInputButton();
-            }
-        },
-
-        disable: function () {
-            if (!this.options.disabled) {
-                this.element.find('input, button').prop('disabled', true);
-                this._disableFileInputButton();
-            }
-            this._super();
         }
-
     });
 
 }));

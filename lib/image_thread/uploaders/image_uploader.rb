@@ -3,7 +3,7 @@ module ImageThread
     class ImageUploader < ::CarrierWave::Uploader::Base
       include CarrierWave::MiniMagick
 
-      # process resize_to_fit: [2000, 2000]
+      process resize_to_limit: [2000, 2000]
       process convert: :jpg
 
       def thumb(size)
@@ -16,14 +16,15 @@ module ImageThread
         cached = File.join(CarrierWave.root, img.url)
 
         unless File.exist?(cached)
-          img.cache!(self)
+          img.store!(self)
 
           size = size.split('x').map(&:to_i)
-          resizer = case size
-                      when /[!#]/ then :resize_to_fit
+          resize = case size
+                      when /!$/ then :resize_to_fit
+                      when /\#$/ then :resize_to_limit
                       else :resize_to_fill
                     end
-          img.send(resizer, *size)
+          img.send(resize, *size)
           img.store!
         end
         img
