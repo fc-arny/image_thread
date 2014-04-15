@@ -27,6 +27,8 @@ module ImageThread
               thread_id = image.thread_id
             end
 
+            #TODO: Deactivate images
+
             transaction do
               instance_variable_get(:"@#{field}_images").each do |image|
                 ImageThread::Image.where(id: image[:id]).update_all(state: image[:state],) unless image[:state].blank?
@@ -34,7 +36,6 @@ module ImageThread
             end
 
             _assign_attribute(field_id, thread_id)
-
             instance_variable_set(:"@#{field}_images", [])
           end
 
