@@ -45,6 +45,34 @@ Then run this migration.
 
 ## Usage
 
+### Setup client-side
+Add js to your manifest file
+
+    require image_thread
+
+If you use custom class for uploader (default: '*.image_thread_fileupload*') require only uploader without init file
+
+    require image_thread/uploader
+
+and init uploader(s):
+
+    $(function(){
+        $('#custom-selector').each(function(){
+            $(this).fileupload({
+                formData: {
+                    uploader: $(this).data('uploader'),
+                    thread:   $(this).data('thread'),
+                    dir:      $(this).data('dir')
+                },
+                inputName: $(this).data('name'),
+                previewCrop: true,
+                previewMaxWidth: 120,
+                previewMaxHeight: 120,
+                filesContainer: $(this).closest('.uploader-container').find('.files')
+            });
+        });
+    });
+
 ### Add thread to model
 1. Create filed %{your_thread_name}_id in your model (Link to thread)
 2. Inside model class add line: has_image_thread :%{your_thread_name}
