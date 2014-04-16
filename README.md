@@ -1,4 +1,4 @@
-a# ImageThread
+# ImageThread
 
 Gem for multiply file upload (for backend).
 
@@ -16,18 +16,14 @@ Dependencies:
 4. Customize uploaders
 5. I18n
 6. Reorder images in thread
-7. Dynamic thumbs (i.e. thread.image[0].fit_300x100 or thread.image[0].fill_300x100)
-8. Placeholder generator for nonexistent files
+7. Placeholder generator for nonexistent files
+
+## Features
+1. Dynamic thumbs (i.e. thread.image[0].thumb('120x120') or thread.image[0].thumb('300x100!'))
+ 
 
 
 ## Installation
-
-Copy migration:
-
-    rails generate image_thread:install
-
-Then run this migration.
-
 
 Add this line to your application's Gemfile:
 
@@ -40,6 +36,12 @@ And then execute:
 Or install it yourself as:
 
     $ gem install image_thread
+
+Copy migrations:
+
+    rails generate image_thread:install
+
+Then run this migration.
 
 ## Usage
 
