@@ -1,8 +1,8 @@
-//= require ../jquery/ui/jquery.ui.widget
-//= require ../load-image
-//= require ../jquery/jquery.fileupload
-//= require ../jquery/jquery.fileupload-process
-//= require ../jquery/jquery.fileupload-image
+//= require ./jquery/ui/jquery.ui.widget
+//= require ./load-image
+//= require ./jquery/jquery.fileupload
+//= require ./jquery/jquery.fileupload-process
+//= require ./jquery/jquery.fileupload-image
 
 (function ($) {
     'use strict';
@@ -24,19 +24,20 @@
             // The expected data type of the upload response, sets the dataType
             // option of the $.ajax upload requests:
             dataType: 'json',
+            // Template for image item
             uploadTemplate: function(o) {
                 var rows = $();
                 $.each(o.files, function (index, file) {
                     var info = 'Name: ' + file.name + ' | Size: ' + o.formatFileSize(file.size);
                     var row = $(
                             '<div class="image-thread-item new" title="' + info + '">' +
-                            '<div class="preview">' +
-                            '<button class="btn btn-danger delete" title="Delete"><span>&times;</span></button>' +
-                            '</div>' +
-                            '<div class="restore"><button class="btn btn-info">Restore</button></div>' +
-                            '<div class="error"></div>' +
-                            '<input type="hidden" name="' + o.options.inputName + '" value="" />' +
-                            '<a class="link" href="' + file.url + '">Link to original</a>' +
+                                '<div class="preview">' +
+                                    '<button class="btn btn-danger delete" title="Delete"><span>&times;</span></button>' +
+                                    '<button class="btn btn-info">Restore</button>' +
+                                '</div>' +
+                                '<div class="error"></div>' +
+                                '<input type="hidden" name="' + o.options.inputName + '" value="" />' +
+                                '<a class="link" href="' + file.url + '">Link to original</a>' +
                             '</div>');
 
                     if (file.error) {
@@ -67,8 +68,8 @@
                     return false;
                 }
 
-                var $this = $(this),
-                    that = $this.data('blueimp-fileupload') || $this.data('fileupload'),
+                var $this   = $(this),
+                    that    = $this.data('blueimp-fileupload') || $this.data('fileupload'),
                     options = that.options;
 
                 data.context = that._renderUpload(data.files)
@@ -80,9 +81,7 @@
                 data.process(function () {
                     return $this.fileupload('process', data);
                 }).done(function () {
-                    if ((that._trigger('added', e, data) !== false) &&
-                        (options.autoUpload || data.autoUpload) &&
-                        data.autoUpload !== false) {
+                    if (that._trigger('added', e, data) !== false) {
                         data.submit();
                     }
                 }).fail(function () {
@@ -101,23 +100,8 @@
                 if (e.isDefaultPrevented()) {
                     return false;
                 }
-                var that = $(this).data('blueimp-fileupload') ||
-                    $(this).data('fileupload');
-                if (data.context && data.dataType &&
-                    data.dataType.substr(0, 6) === 'iframe') {
-                    // Iframe Transport does not support progress events.
-                    // In lack of an indeterminate progress bar, we set
-                    // the progress to 100%, showing the full animated bar:
-                    data.context
-                        .find('.progress').addClass(
-                            !$.support.transition && 'progress-animated'
-                    )
-                        .attr('aria-valuenow', 100)
-                        .children().first().css(
-                        'width',
-                        '100%'
-                    );
-                }
+                var that = $(this).data('blueimp-fileupload') || $(this).data('fileupload');
+
                 return that._trigger('sent', e, data);
             },
             // Callback for successful uploads:
@@ -129,9 +113,9 @@
                 }
 
                 // Default process
-                var that = $(this).data('blueimp-fileupload') || $(this).data('fileupload'),
+                var that                 = $(this).data('blueimp-fileupload') || $(this).data('fileupload'),
                     getFilesFromResponse = data.getFilesFromResponse || that.options.getFilesFromResponse,
-                    files = getFilesFromResponse(data),
+                    files                = getFilesFromResponse(data),
                     deferred;
 
                 data.context.each(function (index) {
@@ -152,15 +136,14 @@
                     return false;
                 }
                 var that = $(this).data('blueimp-fileupload') ||
-                        $(this).data('fileupload'),
-                    template,
+                    $(this).data('fileupload'),
                     deferred;
+
                 if (data.context) {
                     data.context.each(function (index) {
                         if (data.errorThrown !== 'abort') {
                             var file = data.files[index];
-                            file.error = file.error || data.errorThrown ||
-                                true;
+                            file.error = (file.error || data.errorThrown || true);
                             deferred = that._addFinishedDeferreds();
                         } else {
                             deferred = that._addFinishedDeferreds();
@@ -195,30 +178,14 @@
                     that._addFinishedDeferreds().resolve();
                 }
             },
-            // Callback for upload progress events:
-            progress: function (e, data) {
-                if (e.isDefaultPrevented()) {
-                    return false;
-                }
-                var progress = Math.floor(data.loaded / data.total * 100);
-                if (data.context) {
-                    data.context.each(function () {
-                        $(this).find('.progress')
-                            .attr('aria-valuenow', progress)
-                            .children().first().css(
-                            'width',
-                                progress + '%'
-                        );
-                    });
-                }
-            },
+
             // Callback for uploads start, equivalent to the global ajaxStart event:
             start: function (e) {
                 if (e.isDefaultPrevented()) {
                     return false;
                 }
-                var that = $(this).data('blueimp-fileupload') ||
-                    $(this).data('fileupload');
+                var that = $(this).data('blueimp-fileupload') || $(this).data('fileupload');
+
                 that._resetFinishedDeferreds();
                 that._transition($(this).find('.fileupload-progress')).done(
                     function () {
@@ -226,40 +193,7 @@
                     }
                 );
             },
-            // Callback for uploads stop, equivalent to the global ajaxStop event:
-            stop: function (e) {
-                if (e.isDefaultPrevented()) {
-                    return false;
-                }
-                var that = $(this).data('blueimp-fileupload') ||
-                        $(this).data('fileupload'),
-                    deferred = that._addFinishedDeferreds();
-                $.when.apply($, that._getFinishedDeferreds())
-                    .done(function () {
-                        that._trigger('stopped', e);
-                    });
-                that._transition($(this).find('.fileupload-progress')).done(
-                    function () {
-                        $(this).find('.progress')
-                            .attr('aria-valuenow', '0')
-                            .children().first().css('width', '0%');
-                        $(this).find('.progress-extended').html('&nbsp;');
-                        deferred.resolve();
-                    }
-                );
-            },
-            processstart: function (e) {
-                if (e.isDefaultPrevented()) {
-                    return false;
-                }
-                $(this).addClass('fileupload-processing');
-            },
-            processstop: function (e) {
-                if (e.isDefaultPrevented()) {
-                    return false;
-                }
-                $(this).removeClass('fileupload-processing');
-            },
+
             // Callback for file deletion:
             destroy: function (e, data) {
                 if (e.isDefaultPrevented()) {
@@ -274,8 +208,6 @@
                         that._trigger('destroyed', e, data);
                     }
                 );
-
-
             }
         },
 
