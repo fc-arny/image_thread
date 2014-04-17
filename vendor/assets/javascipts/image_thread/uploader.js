@@ -33,7 +33,7 @@
                             '<div class="image-thread-item new" title="' + info + '">' +
                                 '<div class="preview">' +
                                     '<button class="btn btn-danger delete" title="Delete"><span>&times;</span></button>' +
-                                    '<button class="btn btn-info">Restore</button>' +
+                                    '<button class="btn btn-info restore">Restore</button>' +
                                 '</div>' +
                                 '<div class="error"></div>' +
                                 '<input type="hidden" name="' + o.options.inputName + '" value="" />' +

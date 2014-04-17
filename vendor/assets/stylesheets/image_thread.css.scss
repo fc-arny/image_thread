@@ -25,8 +25,21 @@
     height: 155px;
     width: 132px;
 
+    .restore {
+      display: none;
+    }
+
     &.new {
       background: #e3f2ff;
+      .link {
+        opacity: 1;
+      }
+    }
+
+    &.deleted {
+      .restore {
+        display: block;
+      }
     }
 
     .preview {
@@ -37,7 +50,7 @@
         margin: 0 auto;
         opacity: 1;
       }
-      .btn {
+      .delete {
         right: 0;
         position: absolute;
         line-height: 10px;
@@ -50,6 +63,8 @@
         &:hover {
           opacity: 1;
         }
+      }
+      .restore {
       }
     }
 
@@ -65,6 +80,12 @@
         .delete {
           opacity: 0;
         }
+        .restore {
+          display: none;
+        }
+      }
+      .link {
+        opacity: 0;
       }
     }
 
