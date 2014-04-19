@@ -3,6 +3,12 @@
     .preview
       %button.btn.btn-danger.delete{title: 'Delete'}
         %span ×
-      = image_tag(image.source.thumb('120x120'))
+      = image_tag(image.source.thumb('190x150'))
     .error
     %input{name: input_name, type: 'hidden', value: [image.id, ':', image.state].join}
+    .input-group.link
+      %input.form-control.input-sm{value: image.source.url}
+      %span.input-group-btn
+        %button.btn.btn-default.btn-sm{type: :button}
+          Copy
+          %span.glyphicon.glyphicon-link

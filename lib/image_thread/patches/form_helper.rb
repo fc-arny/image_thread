@@ -15,7 +15,7 @@ module ActionView
         template = <<-HTML
           <div class="uploader-container">
             <span class="btn btn-success fileinput-button">
-              <span> Add files...</span>
+              <span class="glyphicon glyphicon-plus"> Add files</span>
               #{file_field_tag(:source, options)}
             </span>
             <div class="files uploader-#{method} clearfix">#{render_image_thread(thread, tag.send(:tag_name, true))}</div>

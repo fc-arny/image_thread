@@ -35,9 +35,21 @@
                                     '<button class="btn btn-danger delete" title="Delete"><span>&times;</span></button>' +
                                     '<button class="btn btn-info restore">Restore</button>' +
                                 '</div>' +
+
                                 '<div class="error"></div>' +
-                                '<input type="hidden" name="' + o.options.inputName + '" value="" />' +
-                                '<a class="link" href="' + file.url + '">Link to original</a>' +
+
+                                '<input class="value" type="hidden" name="' + o.options.inputName + '" value="" />' +
+
+                                '<div class="input-group link">' +
+                                    '<input class="form-control input-sm" value="" />' +
+                                    '<span class="input-group-btn">' +
+                                        '<button class="btn btn-default btn-sm" type="button">' +
+                                            'Copy ' +
+                                            '<span class="glyphicon glyphicon-link"></span>' +
+                                        '</button>' +
+                                    '</span>' +
+                                '</div>' +
+
                             '</div>');
 
                     if (file.error) {
@@ -106,7 +118,8 @@
             },
             // Callback for successful uploads:
             done: function (e, data) {
-                var $imageInput = data.context.children().last();
+                var $imageInput = data.context.find('.value'),
+                    $linkInput  = data.context.find('.link input');
 
                 if (e.isDefaultPrevented()) {
                     return false;
@@ -123,6 +136,7 @@
                     {error: 'Empty file upload result'};
 
                     $imageInput.val(file.id + ':' + file.state);
+                    $linkInput.val(file.url);
 
                     deferred = that._addFinishedDeferreds();
                     $(this).removeClass('processing');

@@ -8,8 +8,8 @@ $(function(){
             },
             inputName: $(this).data('name'),
             previewCrop: true,
-            previewMaxWidth: 120,
-            previewMaxHeight: 120,
+            previewMaxWidth: 180,
+            previewMaxHeight: 150,
             filesContainer: $(this).closest('.uploader-container').find('.files')
         });
     });

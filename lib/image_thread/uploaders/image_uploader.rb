@@ -3,11 +3,16 @@ module ImageThread
     class ImageUploader < ::CarrierWave::Uploader::Base
       include CarrierWave::MiniMagick
 
+      attr_writer :name
+
       process resize_to_limit: [2000, 2000]
       process convert: :jpg
 
+
       def thumb(size)
         uploader = Class.new(self.class)
+        ::CarrierWave::Uploader.const_set("Uploader#{uploader.object_id}".gsub('-', '_'), uploader)
+
         uploader.versions.clear
         uploader.version_names = [size]
 
@@ -16,17 +21,20 @@ module ImageThread
         cached = File.join(CarrierWave.root, img.url)
 
         unless File.exist?(cached)
-          img.store!(self)
+          file.copy_to(cached)
 
-          size = size.split('x').map(&:to_i)
+          size   = size.split('x').map(&:to_i)
           resize = case size
                       when /!$/ then :resize_to_fit
                       when /\#$/ then :resize_to_limit
                       else :resize_to_fill
-                    end
-          img.send(resize, *size)
+                   end
+
+          img.send resize, *size
+          img.name = file.original_filename
           img.store!
         end
+
         img
       end
 
@@ -35,13 +43,17 @@ module ImageThread
       end
 
       def filename
-        "#{secure_token(25)}.#{file.extension}" if original_filename.present?
+        @name ||= "#{secure_token(25)}.#{file.extension}" if original_filename.present?
       end
 
       def store_dir
         dir = model.dir || 'all'
 
         ['uploads', 'images', dir, model.thread_id].join('/')
+      end
+
+      def move_to_store
+        true
       end
 
       protected
