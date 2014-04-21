@@ -8,7 +8,7 @@ $(function(){
             },
             inputName: $(this).data('name'),
             previewCrop: true,
-            previewMaxWidth: 180,
+            previewMaxWidth: 190,
             previewMaxHeight: 150,
             filesContainer: $(this).closest('.uploader-container').find('.files')
         });

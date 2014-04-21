@@ -73,8 +73,7 @@
     &.processing {
       .preview {
         display: block;
-        background: image_url('image_thread/loading.gif') center center no-repeat;
-        background-size: contain;
+        background: image_url('image_thread/loading.gif') center 75px no-repeat;
         height: 140px;
         img {
           opacity: 0;

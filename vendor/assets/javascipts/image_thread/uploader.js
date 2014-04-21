@@ -42,11 +42,9 @@
 
                                 '<div class="input-group link">' +
                                     '<input class="form-control input-sm" value="" />' +
-                                    '<span class="input-group-btn">' +
-                                        '<button class="btn btn-default btn-sm" type="button">' +
-                                            'Copy ' +
-                                            '<span class="glyphicon glyphicon-link"></span>' +
-                                        '</button>' +
+                                    '<span class="input-group-addon">' +
+                                        'Link ' +
+                                        '<span class="glyphicon glyphicon-link"></span>' +
                                     '</span>' +
                                 '</div>' +
 
@@ -176,7 +174,6 @@
                         that.options.prependFiles ? 'prependTo' : 'appendTo'
                         ](that.options.filesContainer)
                         .data('data', data);
-                    that._forceReflow(data.context);
                     deferred = that._addFinishedDeferreds();
                     that._transition(data.context).done(
                         function () {
@@ -289,9 +286,12 @@
             }, button.data()));
         },
 
-        _forceReflow: function (node) {
-            return $.support.transition && node.length &&
-                node[0].offsetWidth;
+        _copyHandler: function(e) {
+            e.preventDefault();
+
+            var $input = $(e.currentTarget).closest('.link').find('input');
+            $input.focus();
+            $input.select();
         },
 
         _transition: function (node) {
@@ -325,6 +325,10 @@
 
         _initEventHandlers: function () {
             this._super();
+            this._on(this.options.filesContainer, {
+                'click .link input': this._copyHandler
+            });
+
             this._on(this.options.filesContainer, {
                 'click .delete': this._deleteHandler
             });

@@ -43,7 +43,7 @@ module ImageThread
       end
 
       def filename
-        @name ||= "#{secure_token(25)}.#{file.extension}" if original_filename.present?
+        @name ||= "#{secure_token(25)}.jpg" if original_filename.present?
       end
 
       def store_dir

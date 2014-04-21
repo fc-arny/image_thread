@@ -8,7 +8,6 @@
     %input{name: input_name, type: 'hidden', value: [image.id, ':', image.state].join}
     .input-group.link
       %input.form-control.input-sm{value: image.source.url}
-      %span.input-group-btn
-        %button.btn.btn-default.btn-sm{type: :button}
-          Copy
-          %span.glyphicon.glyphicon-link
+      %span.input-group-addon
+        Link
+        %span.glyphicon.glyphicon-link
