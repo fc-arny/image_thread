@@ -27,6 +27,7 @@
 
     .restore {
       display: none;
+      margin: 85px auto 0
     }
 
     &.new {
@@ -37,11 +38,24 @@
       .restore {
         display: block;
       }
+      .link {
+        display: none;
+      }
+      .preview {
+        canvas, img {
+          display: none;
+        }
+      }
+      .delete {
+        display: none;
+      }
     }
 
     .preview {
       margin: 5px;
       position: relative;
+      height: 150px;
+      width: 190px;
       canvas, img {
         display: block;
         margin: 0 auto;

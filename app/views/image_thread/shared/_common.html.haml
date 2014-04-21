@@ -1,13 +1,15 @@
 - images.each do |image|
   .image-thread-item
     .preview
+      %button.btn.btn-default.restore
+        %span.glyphicon.glyphicon-repeat
+          = 'Restore'
       %button.btn.btn-danger.delete{title: 'Delete'}
         %span ×
       = image_tag(image.source.thumb('190x150'))
     .error
-    %input{name: input_name, type: 'hidden', value: [image.id, ':', image.state].join}
+    %input{name: input_name, type: 'hidden', class: 'value', value: [image.id, ':', image.state].join}
     .input-group.link
       %input.form-control.input-sm{value: image.source.url}
       %span.input-group-addon
-        Link
         %span.glyphicon.glyphicon-link

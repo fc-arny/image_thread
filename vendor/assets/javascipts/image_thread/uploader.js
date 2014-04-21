@@ -33,7 +33,7 @@
                             '<div class="image-thread-item new" title="' + info + '">' +
                                 '<div class="preview">' +
                                     '<button class="btn btn-danger delete" title="Delete"><span>&times;</span></button>' +
-                                    '<button class="btn btn-info restore">Restore</button>' +
+                                    '<button class="btn btn-default restore"><span class="glyphicon glyphicon-repeat"></span> Restore</button>' +
                                 '</div>' +
 
                                 '<div class="error"></div>' +
@@ -43,7 +43,6 @@
                                 '<div class="input-group link">' +
                                     '<input class="form-control input-sm" value="" />' +
                                     '<span class="input-group-addon">' +
-                                        'Link ' +
                                         '<span class="glyphicon glyphicon-link"></span>' +
                                     '</span>' +
                                 '</div>' +
@@ -210,12 +209,16 @@
                 if (e.isDefaultPrevented()) {
                     return false;
                 }
-                var that = $(this).data('blueimp-fileupload') || $(this).data('fileupload');
+                var that    = $(this).data('blueimp-fileupload') || $(this).data('fileupload'),
+                    $input  = data.context.find('.value'),
+                    values  = $input.val().split(':');
+
+                values[1] = 'delete';
+                $input.val(values.join(':'));
 
                 that._transition(data.context).done(
                     function () {
-                        $(this).find('.preview').hide();
-                        $(this).find('.restore').show();
+                        $(this).addClass('deleted');
                         that._trigger('destroyed', e, data);
                     }
                 );
@@ -294,6 +297,21 @@
             $input.select();
         },
 
+        _restoreHandler: function(e) {
+            e.preventDefault();
+
+            var $btn    = $(e.currentTarget),
+                $item   = $btn.closest('.image-thread-item'),
+                $input  = $item.find('.value'),
+                values  = $input.val().split(':');
+
+            values[1] = 'active';
+            $input.val(values.join(':'));
+
+            $item.removeClass('deleted');
+
+        },
+
         _transition: function (node) {
             var dfd = $.Deferred();
             if ($.support.transition && node.hasClass('fade') && node.is(':visible')) {
@@ -332,6 +350,11 @@
             this._on(this.options.filesContainer, {
                 'click .delete': this._deleteHandler
             });
+
+            this._on(this.options.filesContainer, {
+                'click .restore': this._restoreHandler
+            });
+
         },
 
         _destroyEventHandlers: function () {
