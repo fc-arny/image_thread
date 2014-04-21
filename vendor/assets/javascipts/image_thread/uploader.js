@@ -213,7 +213,7 @@
                     $input  = data.context.find('.value'),
                     values  = $input.val().split(':');
 
-                values[1] = 'delete';
+                values[1] = 'deleted';
                 $input.val(values.join(':'));
 
                 that._transition(data.context).done(

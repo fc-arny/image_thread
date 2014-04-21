@@ -17,12 +17,12 @@ Dependencies:
 5. I18n
 6. Reorder images in thread
 7. Placeholder generator for nonexistent files
-8. Settings: remove file on destroy
 
 ## Features
 1. Dynamic thumbs (i.e. thread.image[0].thumb('120x120') or thread.image[0].thumb('300x100!'))
+2. Settings: remove file on destroy(ex.: has_image_thread :images, delete: :file )
  
-
+## Examples
 
 ## Installation
 

@@ -10,6 +10,9 @@ module ImageThread
         field_id            = [field, 'id'].join('_')
         before_save_method  = ['append_images', field].join('_')
 
+        # Options
+        delete = opt[:delete] || [] # :row, :files
+
 
         class_eval do
           belongs_to field, class_name: 'ImageThread::Thread'
@@ -31,7 +34,30 @@ module ImageThread
 
             transaction do
               instance_variable_get(:"@#{field}_images").each do |image|
-                ImageThread::Image.where(id: image[:id]).update_all(state: image[:state],) unless image[:state].blank?
+                image = ImageThread::Image.find image[:id]
+
+                unless image.blank?
+                  image.update(state: image[:state]) unless image[:state].blank?
+
+                  if state == ImageThread::Image::STATE_DELETED
+                    # Remove all files
+                    if delete.include?(:files)
+                      dir_name  = File.dirname(image.source.path)
+                      file_name = File.basename(image.source.path)
+
+                      Dir.chdir(dir_name)
+                      Dir.glob(['*', file_name].join).each do |file|
+                        File.delete File.expand_path(file)
+                      end
+
+                      File.expand_path image.source
+                    end
+
+                    # Remove row from DB
+                    image.destroy if delete.include?(:row) || delete.include?(:files)
+                  end
+                end
+
               end
             end
 
