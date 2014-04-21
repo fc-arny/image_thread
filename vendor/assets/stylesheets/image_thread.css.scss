@@ -12,6 +12,7 @@
     font-size: 200px;
     direction: ltr;
     cursor: pointer;
+    height: 32px;
   }
 }
 
@@ -68,9 +69,7 @@
         font-size: 20px;
         padding: 0px 1px 4px;
         margin: 5px;
-        opacity: 0.3;
-        background: #515151;
-        border-color: #5a5a5a;
+        opacity: 0.75;
         &:hover {
           opacity: 1;
         }
