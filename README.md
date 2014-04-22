@@ -1,5 +1,7 @@
 # ImageThread
 
+[![Code Climate](https://codeclimate.com/github/martsoft/image_thread.png)](https://codeclimate.com/github/martsoft/image_thread)
+
 Gem for multiply file upload (for backend).
 
 One thread (thread of images) have many images. Attach thread to your model and
