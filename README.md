@@ -1,6 +1,7 @@
 # ImageThread
 
 [![Code Climate](https://codeclimate.com/github/martsoft/image_thread.png)](https://codeclimate.com/github/martsoft/image_thread)
+[![Gem Version](https://badge.fury.io/rb/image_thread@2x.png)](http://badge.fury.io/rb/image_thread)
 
 Gem for multiply file upload (for backend).
 
