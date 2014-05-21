@@ -23,6 +23,10 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '~> 1.0'
 
   spec.add_dependency 'rails', '>= 4.0.0'
+
+  spec.add_dependency 'haml-rails'
+  spec.add_dependency 'sass-rails'
+
   spec.add_dependency 'carrierwave'
   spec.add_dependency 'mini_magick'
   spec.add_dependency 'foreigner'
