@@ -9,6 +9,7 @@ require 'image_thread/exceptions'
 require 'image_thread/version'
 require 'image_thread/engine'
 require 'image_thread/patches/form_helper'
+require 'image_thread/uploaders/image_uploader'
 require 'image_thread/model_methods'
 
 module ImageThread

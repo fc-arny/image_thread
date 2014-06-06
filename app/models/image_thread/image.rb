@@ -1,5 +1,3 @@
-require  'image_thread/uploaders/image_uploader'
-
 module ImageThread
   class Image < ActiveRecord::Base
     self.table_name = ImageThread.image_table_name.to_s
