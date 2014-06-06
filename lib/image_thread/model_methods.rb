@@ -20,7 +20,7 @@ module ImageThread
 
           define_method before_save_method do
             thread_id   = nil
-            image_ids   = instance_variable_get(:"@#{field}_images").map { |i| i[:id] }
+            image_ids   = instance_variable_get(:"@#{field}").map { |i| i[:id] }
 
             ImageThread::Image.select('id, thread_id').where(id: image_ids).each do |image|
               if !thread_id.blank? && thread_id != image.thread_id
@@ -33,7 +33,7 @@ module ImageThread
             #TODO: Deactivate images
 
             transaction do
-              instance_variable_get(:"@#{field}_images").each do |image|
+              instance_variable_get(:"@#{field}").each do |image|
                 img = ImageThread::Image.find image[:id]
 
                 unless img.blank?
@@ -62,20 +62,20 @@ module ImageThread
             end
 
             _assign_attribute(field_id, thread_id)
-            instance_variable_set(:"@#{field}_images", [])
+            instance_variable_set(:"@#{field}", [])
           end
 
-          define_method [field, 'images='].join('_') do |images|
+          define_method [field, '='].join do |images|
             res = []
             images.each do |image|
               id, state = image.split(':')
               res << {id: id, state: state}
             end
-            instance_variable_set(:"@#{field}_images", res)
+            instance_variable_set(:"@#{field}", res)
           end
 
-          define_method [field, 'images'].join('_') do
-            instance_variable_get(:"@#{field}_images")
+          define_method field do
+            instance_variable_get(:"@#{field}")
           end
         end
       end
