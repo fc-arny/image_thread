@@ -1,4 +1,4 @@
-$(function(){
+$(document).on('ready pjax:success', function() {
     $('.image_thread_fileupload').each(function(){
         $(this).fileupload({
             formData: {

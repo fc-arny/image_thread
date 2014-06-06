@@ -9,7 +9,7 @@
       = image_tag(image.source.thumb('190x150'))
     .error
     %input{name: input_name, type: 'hidden', class: 'value', value: [image.id, ':', image.state].join}
-    .input-group.link
-      %input.form-control.input-sm{value: image.source.url}
-      %span.input-group-addon
-        %span.glyphicon.glyphicon-link
+    .input-group.default-image
+      %label.radio
+        %input{name: "#{input_name}", type: 'radio', value: [image.id, 'default'].join(':'), checked: image.id == image.thread.default_image_id ? true : false }
+        = 'Main image'

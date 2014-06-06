@@ -37,6 +37,11 @@ module ImageThread
                 img = ImageThread::Image.find image[:id]
 
                 unless img.blank?
+                  if image[:state] == 'default'
+                    img.thread.update_attribute(:default_image_id, img.id)
+                    next
+                  end
+
                   img.update(state: image[:state]) unless image[:state].blank?
 
                   if img.state == ImageThread::Image::STATE_DELETED

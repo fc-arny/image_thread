@@ -14,5 +14,11 @@ module ImageThread
     belongs_to :thread, class_name: 'ImageThread::Thread'
 
     mount_uploader :source, ImageThread::Uploaders::ImageUploader
+
+    after_create do
+      if thread.default_image_id.blank?
+        thread.update_attribute(:default_image_id, id)
+      end
+    end
   end
 end

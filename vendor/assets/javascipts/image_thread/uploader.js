@@ -39,14 +39,12 @@
                                 '<div class="error"></div>' +
 
                                 '<input class="value" type="hidden" name="' + o.options.inputName + '" value="" />' +
-
-                                '<div class="input-group link">' +
-                                    '<input class="form-control input-sm" value="" />' +
-                                    '<span class="input-group-addon">' +
-                                        '<span class="glyphicon glyphicon-link"></span>' +
-                                    '</span>' +
+                                '<div class="input-group default-image">' +
+                                    '<label class="radio">' +
+                                        '<input type="radio" name="' + o.options.inputName + '" value="" />' +
+                                        'Main image' +
+                                    '</label>' +
                                 '</div>' +
-
                             '</div>');
 
                     if (file.error) {
@@ -116,7 +114,7 @@
             // Callback for successful uploads:
             done: function (e, data) {
                 var $imageInput = data.context.find('.value'),
-                    $linkInput  = data.context.find('.link input');
+                    $defaultInput  = data.context.find('.default-image input');
 
                 if (e.isDefaultPrevented()) {
                     return false;
@@ -133,7 +131,7 @@
                     {error: 'Empty file upload result'};
 
                     $imageInput.val(file.id + ':' + file.state);
-                    $linkInput.val(file.url);
+                    $defaultInput.val(file.id + ':default');
 
                     deferred = that._addFinishedDeferreds();
                     $(this).removeClass('processing');
@@ -289,14 +287,6 @@
             }, button.data()));
         },
 
-        _copyHandler: function(e) {
-            e.preventDefault();
-
-            var $input = $(e.currentTarget).closest('.link').find('input');
-            $input.focus();
-            $input.select();
-        },
-
         _restoreHandler: function(e) {
             e.preventDefault();
 
@@ -343,9 +333,6 @@
 
         _initEventHandlers: function () {
             this._super();
-            this._on(this.options.filesContainer, {
-                'click .link input': this._copyHandler
-            });
 
             this._on(this.options.filesContainer, {
                 'click .delete': this._deleteHandler

@@ -23,7 +23,7 @@
     border: 1px solid #d3e4f3;
     float: left;
     margin: 5px;
-    height: 200px;
+    height: 185px;
     width: 202px;
 
     .restore {
@@ -39,7 +39,7 @@
       .restore {
         display: block;
       }
-      .link {
+      .default-image {
         display: none;
       }
       .preview {
@@ -78,7 +78,7 @@
       }
     }
 
-    .link {
+    .default-image {
       opacity: 1;
       margin: 0px 5px;
     }
@@ -98,7 +98,7 @@
           display: none;
         }
       }
-      .link {
+      .default-image {
         opacity: 0;
       }
     }
