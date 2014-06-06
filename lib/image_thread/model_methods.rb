@@ -34,27 +34,27 @@ module ImageThread
 
             transaction do
               instance_variable_get(:"@#{field}_images").each do |image|
-                image = ImageThread::Image.find image[:id]
+                img = ImageThread::Image.find image[:id]
 
-                unless image.blank?
-                  image.update(state: image[:state]) unless image[:state].blank?
+                unless img.blank?
+                  img.update(state: image[:state]) unless image[:state].blank?
 
-                  if state == ImageThread::Image::STATE_DELETED
+                  if img.state == ImageThread::Image::STATE_DELETED
                     # Remove all files
                     if delete.include?(:files)
-                      dir_name  = File.dirname(image.source.path)
-                      file_name = File.basename(image.source.path)
+                      dir_name  = File.dirname(img.source.path)
+                      file_name = File.basename(img.source.path)
 
                       Dir.chdir(dir_name)
                       Dir.glob(['*', file_name].join).each do |file|
                         File.delete File.expand_path(file)
                       end
 
-                      File.expand_path image.source
+                      File.expand_path img.source
                     end
 
                     # Remove row from DB
-                    image.destroy if delete.include?(:row) || delete.include?(:files)
+                    img.destroy if delete.include?(:row) || delete.include?(:files)
                   end
                 end
 

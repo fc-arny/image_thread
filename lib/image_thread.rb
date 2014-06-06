@@ -3,6 +3,11 @@ require 'rails/all'
 require 'carrierwave'
 require 'foreigner'
 require 'migration_comments'
+
+# Core
+require 'image_thread/exceptions'
+require 'image_thread/version'
+require 'image_thread/engine'
 require 'image_thread/patches/form_helper'
 require 'image_thread/model_methods'
 
@@ -24,6 +29,5 @@ ActiveSupport.on_load(:active_record) do
   include ImageThread::ModelMethods
 end
 
-require 'image_thread/exceptions'
-require 'image_thread/version'
-require 'image_thread/engine'
+# Extentions
+require 'image_thread/extensions/rails_admin' if defined?(RailsAdmin)
