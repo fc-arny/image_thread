@@ -9,7 +9,7 @@ module ImageThread
 
     STATES = [STATE_NEW, STATE_ACTIVE, STATE_DELETED, STATE_INACTIVE]
 
-    belongs_to :thread, class_name: 'ImageThread::Thread'
+    belongs_to :thread, class_name: '::ImageThread::Thread'
 
     mount_uploader :source, ImageThread::Uploaders::ImageUploader
 

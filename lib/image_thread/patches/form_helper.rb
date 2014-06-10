@@ -2,7 +2,7 @@ module ActionView
   module Helpers
     module FormHelper
       def image_thread_field(object_name, method, options = nil)
-        tag     = ActionView::Helpers::Tags::Base.new(object_name, method, self)
+        tag     = ActionView::Helpers::Tags::Base.new(object_name, [method, 'images'].join('_'), self)
         thread  = options.delete(:thread)
 
         options.update(class: 'image_thread_fileupload')
