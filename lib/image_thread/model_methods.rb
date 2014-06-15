@@ -20,6 +20,8 @@ module ImageThread
 
           define_method before_save_method do
             thread_id   = nil
+            images = instance_variable_get(:"@#{field}_images")
+            return if images.blank?
             image_ids   = instance_variable_get(:"@#{field}_images").map { |i| i[:id] }
 
             ImageThread::Image.select('id, thread_id').where(id: image_ids).each do |image|
