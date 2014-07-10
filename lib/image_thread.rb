@@ -29,6 +29,3 @@ end
 ActiveSupport.on_load(:active_record) do
   include ImageThread::ModelMethods
 end
-
-# Extentions
-require 'image_thread/extensions/rails_admin' if defined?(RailsAdmin)

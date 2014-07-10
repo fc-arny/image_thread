@@ -1,8 +1,8 @@
-//= require ./jquery/ui/jquery.ui.widget
-//= require ./load-image
-//= require ./jquery/jquery.fileupload
-//= require ./jquery/jquery.fileupload-process
-//= require ./jquery/jquery.fileupload-image
+//= require image_thread/jquery/ui/jquery.ui.widget.js
+//= require image_thread/load-image
+//= require image_thread/jquery/jquery.fileupload
+//= require image_thread/jquery/jquery.fileupload-process
+//= require image_thread/jquery/jquery.fileupload-image
 
 (function ($) {
     'use strict';
