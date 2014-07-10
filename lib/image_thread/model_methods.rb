@@ -16,6 +16,7 @@ module ImageThread
 
         class_eval do
           belongs_to field, class_name: 'ImageThread::Thread'
+          # has_many "#{field}_all", -> { includes(:image_thread_images).where('image_thread_images.thread_id = ? AND image_thread_images.state = ?', self.send("#{field}_id"))}
           before_save before_save_method.to_sym
 
           define_method before_save_method do

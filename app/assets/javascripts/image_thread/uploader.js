@@ -1,4 +1,4 @@
-//= require image_thread/jquery/ui/jquery.ui.widget.js
+//= require image_thread/jquery/ui/jquery.ui.widget
 //= require image_thread/load-image
 //= require image_thread/jquery/jquery.fileupload
 //= require image_thread/jquery/jquery.fileupload-process

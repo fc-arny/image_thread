@@ -13,6 +13,8 @@ module ImageThread
 
     mount_uploader :source, ImageThread::Uploaders::ImageUploader
 
+    delegate :thumb, to: :source
+
     after_create do
       if thread.default_image_id.blank?
         thread.update_attribute(:default_image_id, id)
